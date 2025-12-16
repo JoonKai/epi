@@ -1,0 +1,165 @@
+# -*- coding: utf-8 -*-
+
+################################################################################
+## Form generated from reading UI file 'main_windowQaOMNE.ui'
+##
+## Created by: Qt User Interface Compiler version 6.10.1
+##
+## WARNING! All changes made in this file will be lost when recompiling UI file!
+################################################################################
+
+from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
+    QMetaObject, QObject, QPoint, QRect,
+    QSize, QTime, QUrl, Qt)
+from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
+    QCursor, QFont, QFontDatabase, QGradient,
+    QIcon, QImage, QKeySequence, QLinearGradient,
+    QPainter, QPalette, QPixmap, QRadialGradient,
+    QTransform)
+from PySide6.QtWidgets import (QApplication, QGridLayout, QMainWindow, QMdiArea,
+    QMenu, QMenuBar, QSizePolicy, QStatusBar,
+    QWidget)
+
+class Ui_MainWindow(object):
+    def setupUi(self, MainWindow):
+        if not MainWindow.objectName():
+            MainWindow.setObjectName(u"MainWindow")
+        MainWindow.resize(889, 642)
+        self.mn_settings_window = QAction(MainWindow)
+        self.mn_settings_window.setObjectName(u"mn_settings_window")
+        self.mn_pltrend = QAction(MainWindow)
+        self.mn_pltrend.setObjectName(u"mn_pltrend")
+        self.action = QAction(MainWindow)
+        self.action.setObjectName(u"action")
+        self.actionMOCVD_2 = QAction(MainWindow)
+        self.actionMOCVD_2.setObjectName(u"actionMOCVD_2")
+        self.actionMariaDB = QAction(MainWindow)
+        self.actionMariaDB.setObjectName(u"actionMariaDB")
+        self.action_2 = QAction(MainWindow)
+        self.action_2.setObjectName(u"action_2")
+        self.mn_fmmacro = QAction(MainWindow)
+        self.mn_fmmacro.setObjectName(u"mn_fmmacro")
+        self.actionEES = QAction(MainWindow)
+        self.actionEES.setObjectName(u"actionEES")
+        self.actionWindows = QAction(MainWindow)
+        self.actionWindows.setObjectName(u"actionWindows")
+        self.actionPL = QAction(MainWindow)
+        self.actionPL.setObjectName(u"actionPL")
+        self.actionPL_Viewer = QAction(MainWindow)
+        self.actionPL_Viewer.setObjectName(u"actionPL_Viewer")
+        self.actionXRD_Viewer = QAction(MainWindow)
+        self.actionXRD_Viewer.setObjectName(u"actionXRD_Viewer")
+        self.actionOpen = QAction(MainWindow)
+        self.actionOpen.setObjectName(u"actionOpen")
+        self.centralwidget = QWidget(MainWindow)
+        self.centralwidget.setObjectName(u"centralwidget")
+        self.gridLayout = QGridLayout(self.centralwidget)
+        self.gridLayout.setSpacing(0)
+        self.gridLayout.setObjectName(u"gridLayout")
+        self.gridLayout.setContentsMargins(1, 1, 1, 1)
+        self.mdiArea = QMdiArea(self.centralwidget)
+        self.mdiArea.setObjectName(u"mdiArea")
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.mdiArea.sizePolicy().hasHeightForWidth())
+        self.mdiArea.setSizePolicy(sizePolicy)
+        brush = QBrush(QColor(0, 184, 184, 255))
+        brush.setStyle(Qt.BrushStyle.FDiagPattern)
+        self.mdiArea.setBackground(brush)
+
+        self.gridLayout.addWidget(self.mdiArea, 0, 0, 1, 1)
+
+        MainWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QMenuBar(MainWindow)
+        self.menubar.setObjectName(u"menubar")
+        self.menubar.setGeometry(QRect(0, 0, 889, 33))
+        self.menu = QMenu(self.menubar)
+        self.menu.setObjectName(u"menu")
+        self.menu_2 = QMenu(self.menubar)
+        self.menu_2.setObjectName(u"menu_2")
+        self.menuDB = QMenu(self.menu_2)
+        self.menuDB.setObjectName(u"menuDB")
+        self.menu_3 = QMenu(self.menubar)
+        self.menu_3.setObjectName(u"menu_3")
+        self.menu_8 = QMenu(self.menu_3)
+        self.menu_8.setObjectName(u"menu_8")
+        self.menuMOCVD = QMenu(self.menu_3)
+        self.menuMOCVD.setObjectName(u"menuMOCVD")
+        self.menu_4 = QMenu(self.menubar)
+        self.menu_4.setObjectName(u"menu_4")
+        self.menu_5 = QMenu(self.menubar)
+        self.menu_5.setObjectName(u"menu_5")
+        self.menu_6 = QMenu(self.menubar)
+        self.menu_6.setObjectName(u"menu_6")
+        self.menu_7 = QMenu(self.menubar)
+        self.menu_7.setObjectName(u"menu_7")
+        self.menu_9 = QMenu(self.menubar)
+        self.menu_9.setObjectName(u"menu_9")
+        self.menu_10 = QMenu(self.menubar)
+        self.menu_10.setObjectName(u"menu_10")
+        MainWindow.setMenuBar(self.menubar)
+        self.statusbar = QStatusBar(MainWindow)
+        self.statusbar.setObjectName(u"statusbar")
+        MainWindow.setStatusBar(self.statusbar)
+
+        self.menubar.addAction(self.menu.menuAction())
+        self.menubar.addAction(self.menu_7.menuAction())
+        self.menubar.addAction(self.menu_10.menuAction())
+        self.menubar.addAction(self.menu_2.menuAction())
+        self.menubar.addAction(self.menu_9.menuAction())
+        self.menubar.addAction(self.menu_3.menuAction())
+        self.menubar.addAction(self.menu_4.menuAction())
+        self.menubar.addAction(self.menu_5.menuAction())
+        self.menubar.addAction(self.menu_6.menuAction())
+        self.menu.addAction(self.actionOpen)
+        self.menu_2.addAction(self.menuDB.menuAction())
+        self.menuDB.addAction(self.actionMariaDB)
+        self.menu_3.addAction(self.menuMOCVD.menuAction())
+        self.menu_3.addAction(self.menu_8.menuAction())
+        self.menu_3.addAction(self.action_2)
+        self.menu_8.addAction(self.mn_pltrend)
+        self.menu_8.addAction(self.action)
+        self.menuMOCVD.addAction(self.actionMOCVD_2)
+        self.menu_7.addAction(self.mn_settings_window)
+        self.menu_9.addAction(self.mn_fmmacro)
+        self.menu_9.addAction(self.actionEES)
+        self.menu_9.addAction(self.actionWindows)
+        self.menu_9.addAction(self.actionPL)
+        self.menu_10.addAction(self.actionPL_Viewer)
+        self.menu_10.addAction(self.actionXRD_Viewer)
+
+        self.retranslateUi(MainWindow)
+
+        QMetaObject.connectSlotsByName(MainWindow)
+    # setupUi
+
+    def retranslateUi(self, MainWindow):
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
+        self.mn_settings_window.setText(QCoreApplication.translate("MainWindow", u"\ud658\uacbd\uc124\uc815", None))
+        self.mn_pltrend.setText(QCoreApplication.translate("MainWindow", u"PL\ud2b8\ub80c\ub4dc", None))
+        self.action.setText(QCoreApplication.translate("MainWindow", u"\uc124\ube44\uad00\ub9ac", None))
+        self.actionMOCVD_2.setText(QCoreApplication.translate("MainWindow", u"MOCVD", None))
+        self.actionMariaDB.setText(QCoreApplication.translate("MainWindow", u"MariaDB", None))
+        self.action_2.setText(QCoreApplication.translate("MainWindow", u"\ub85c\ubd07\uc81c\uc5b4", None))
+        self.mn_fmmacro.setText(QCoreApplication.translate("MainWindow", u"Factory Modeler", None))
+        self.actionEES.setText(QCoreApplication.translate("MainWindow", u"EES", None))
+        self.actionWindows.setText(QCoreApplication.translate("MainWindow", u"Windows", None))
+        self.actionPL.setText(QCoreApplication.translate("MainWindow", u"PL", None))
+        self.actionPL_Viewer.setText(QCoreApplication.translate("MainWindow", u"PL Viewer", None))
+        self.actionXRD_Viewer.setText(QCoreApplication.translate("MainWindow", u"XRD Viewer", None))
+        self.actionOpen.setText(QCoreApplication.translate("MainWindow", u"Open", None))
+        self.menu.setTitle(QCoreApplication.translate("MainWindow", u"\ud30c\uc77c", None))
+        self.menu_2.setTitle(QCoreApplication.translate("MainWindow", u"\ub370\uc774\ud130\ubca0\uc774\uc2a4", None))
+        self.menuDB.setTitle(QCoreApplication.translate("MainWindow", u"DB", None))
+        self.menu_3.setTitle(QCoreApplication.translate("MainWindow", u"\uc124\ube44", None))
+        self.menu_8.setTitle(QCoreApplication.translate("MainWindow", u"\uce21\uc815\uc124\ube44", None))
+        self.menuMOCVD.setTitle(QCoreApplication.translate("MainWindow", u"MOCVD", None))
+        self.menu_4.setTitle(QCoreApplication.translate("MainWindow", u"\uc81c\uc870", None))
+        self.menu_5.setTitle(QCoreApplication.translate("MainWindow", u"\uacf5\uc815", None))
+        self.menu_6.setTitle(QCoreApplication.translate("MainWindow", u"\uae30\ud0c0", None))
+        self.menu_7.setTitle(QCoreApplication.translate("MainWindow", u"\uc124\uc815", None))
+        self.menu_9.setTitle(QCoreApplication.translate("MainWindow", u"\ub9e4\ud06c\ub85c", None))
+        self.menu_10.setTitle(QCoreApplication.translate("MainWindow", u"\ubdf0\uc5b4", None))
+    # retranslateUi
+

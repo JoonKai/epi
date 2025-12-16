@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>889</width>
+    <height>642</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <property name="leftMargin">
+     <number>1</number>
+    </property>
+    <property name="topMargin">
+     <number>1</number>
+    </property>
+    <property name="rightMargin">
+     <number>1</number>
+    </property>
+    <property name="bottomMargin">
+     <number>1</number>
+    </property>
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <item row="0" column="0">
+     <widget class="QMdiArea" name="mdiArea">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="background">
+       <brush brushstyle="FDiagPattern">
+        <color alpha="255">
+         <red>0</red>
+         <green>184</green>
+         <blue>184</blue>
+        </color>
+       </brush>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>889</width>
+     <height>33</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>파일</string>
+    </property>
+    <addaction name="actionOpen"/>
+   </widget>
+   <widget class="QMenu" name="menu_2">
+    <property name="title">
+     <string>데이터베이스</string>
+    </property>
+    <widget class="QMenu" name="menuDB">
+     <property name="title">
+      <string>DB</string>
+     </property>
+     <addaction name="actionMariaDB"/>
+    </widget>
+    <addaction name="menuDB"/>
+   </widget>
+   <widget class="QMenu" name="menu_3">
+    <property name="title">
+     <string>설비</string>
+    </property>
+    <widget class="QMenu" name="menu_8">
+     <property name="title">
+      <string>측정설비</string>
+     </property>
+     <addaction name="mn_pltrend"/>
+     <addaction name="action"/>
+    </widget>
+    <widget class="QMenu" name="menuMOCVD">
+     <property name="title">
+      <string>MOCVD</string>
+     </property>
+     <addaction name="actionMOCVD_2"/>
+    </widget>
+    <addaction name="menuMOCVD"/>
+    <addaction name="menu_8"/>
+    <addaction name="action_2"/>
+   </widget>
+   <widget class="QMenu" name="menu_4">
+    <property name="title">
+     <string>제조</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menu_5">
+    <property name="title">
+     <string>공정</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menu_6">
+    <property name="title">
+     <string>기타</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menu_7">
+    <property name="title">
+     <string>설정</string>
+    </property>
+    <addaction name="mn_settings_window"/>
+   </widget>
+   <widget class="QMenu" name="menu_9">
+    <property name="title">
+     <string>매크로</string>
+    </property>
+    <addaction name="mn_fmmacro"/>
+    <addaction name="actionEES"/>
+    <addaction name="actionWindows"/>
+    <addaction name="actionPL"/>
+   </widget>
+   <widget class="QMenu" name="menu_10">
+    <property name="title">
+     <string>뷰어</string>
+    </property>
+    <addaction name="actionPL_Viewer"/>
+    <addaction name="actionXRD_Viewer"/>
+   </widget>
+   <addaction name="menu"/>
+   <addaction name="menu_7"/>
+   <addaction name="menu_10"/>
+   <addaction name="menu_2"/>
+   <addaction name="menu_9"/>
+   <addaction name="menu_3"/>
+   <addaction name="menu_4"/>
+   <addaction name="menu_5"/>
+   <addaction name="menu_6"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="mn_settings_window">
+   <property name="text">
+    <string>환경설정</string>
+   </property>
+  </action>
+  <action name="mn_pltrend">
+   <property name="text">
+    <string>PL트렌드</string>
+   </property>
+  </action>
+  <action name="action">
+   <property name="text">
+    <string>설비관리</string>
+   </property>
+  </action>
+  <action name="actionMOCVD_2">
+   <property name="text">
+    <string>MOCVD</string>
+   </property>
+  </action>
+  <action name="actionMariaDB">
+   <property name="text">
+    <string>MariaDB</string>
+   </property>
+  </action>
+  <action name="action_2">
+   <property name="text">
+    <string>로봇제어</string>
+   </property>
+  </action>
+  <action name="mn_fmmacro">
+   <property name="text">
+    <string>Factory Modeler</string>
+   </property>
+  </action>
+  <action name="actionEES">
+   <property name="text">
+    <string>EES</string>
+   </property>
+  </action>
+  <action name="actionWindows">
+   <property name="text">
+    <string>Windows</string>
+   </property>
+  </action>
+  <action name="actionPL">
+   <property name="text">
+    <string>PL</string>
+   </property>
+  </action>
+  <action name="actionPL_Viewer">
+   <property name="text">
+    <string>PL Viewer</string>
+   </property>
+  </action>
+  <action name="actionXRD_Viewer">
+   <property name="text">
+    <string>XRD Viewer</string>
+   </property>
+  </action>
+  <action name="actionOpen">
+   <property name="text">
+    <string>Open</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

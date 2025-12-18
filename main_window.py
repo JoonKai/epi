@@ -3,6 +3,7 @@ from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox, QProgressD
 from PySide6.QtCore import Qt
 # from controller.pltrend_controller import PLTrendController
 from controller.fmmacro_controller import FMMacroController
+from controller.susmaker_controller import SUSMakerController
 from windows.ui_main_window import Ui_MainWindow
 from main_settings import SettingsDialog
 
@@ -16,6 +17,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setWindowTitle("EPI")
         self.mn_settings_window.triggered.connect(self.open_settings_window)
         self.mn_fmmacro.triggered.connect(self.open_sub_fmmacro)
+        self.mn_susceptormaker.triggered.connect(self.open_sub_susmaker)
 
 
     def open_settings_window(self):
@@ -30,6 +32,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 return
         
         sub_widget = FMMacroController(self) 
+        sub = QMdiSubWindow() 
+        sub.setWidget(sub_widget) 
+        sub.setAttribute(Qt.WA_DeleteOnClose, True) 
+        self.mdiArea.addSubWindow(sub) 
+        sub.show()
+
+    def open_sub_susmaker(self): 
+        for sub in self.mdiArea.subWindowList(): 
+            if isinstance(sub.widget(), SUSMakerController):
+                sub.activateWindow() 
+                self.mdiArea.setActiveSubWindow(sub) 
+                return
+        
+        sub_widget = SUSMakerController(self) 
         sub = QMdiSubWindow() 
         sub.setWidget(sub_widget) 
         sub.setAttribute(Qt.WA_DeleteOnClose, True) 

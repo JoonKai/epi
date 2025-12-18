@@ -88,6 +88,7 @@
      </property>
      <addaction name="mn_pltrend"/>
      <addaction name="action"/>
+     <addaction name="mn_susceptormaker"/>
     </widget>
     <widget class="QMenu" name="menuMOCVD">
      <property name="title">
@@ -128,6 +129,7 @@
     <addaction name="actionEES"/>
     <addaction name="actionWindows"/>
     <addaction name="actionPL"/>
+    <addaction name="mn_safety"/>
    </widget>
    <widget class="QMenu" name="menu_10">
     <property name="title">
@@ -210,6 +212,16 @@
   <action name="actionOpen">
    <property name="text">
     <string>Open</string>
+   </property>
+  </action>
+  <action name="mn_safety">
+   <property name="text">
+    <string>안전교육</string>
+   </property>
+  </action>
+  <action name="mn_susceptormaker">
+   <property name="text">
+    <string>Susceptor Maker</string>
    </property>
   </action>
  </widget>

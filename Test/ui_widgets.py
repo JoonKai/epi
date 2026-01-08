@@ -361,83 +361,78 @@ class MultiRingPanel(QWidget):
                 QMessageBox.critical(self, "Error", f"Failed to save file:\n{str(e)}")
 
     def _save_to_xml_file(self, filename: str):
-        """Spec 데이터를 .sus (XML) 포맷으로 변환하여 저장"""
+        import math
+        import xml.etree.ElementTree as ET
+        from xml.dom import minidom
         
-        # 1. 단위 변환 상수 (Inch -> mm)
         MM = Constants.MM_PER_INCH
         
-        # 2. Root Element 생성
         root = ET.Element("SusceptorMgr", {
             "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
             "xmlns:xsd": "http://www.w3.org/2001/XMLSchema"
         })
 
-        # 3. WaferSets (Ring 목록)
         wafer_sets = ET.SubElement(root, "WaferSets")
         
-        global_wafer_no = 1  # 웨이퍼 번호는 링을 넘어서 계속 증가 [cite: 2, 20]
+        global_wafer_no = 1
         if self.spec.start_from_zero:
             global_wafer_no = 0
 
         for r_idx, ring in enumerate(self.spec.rings):
-            # Ring Item 생성
             item_node = ET.SubElement(wafer_sets, "Item", type="EMPL.susceptor.WaferSetRing, EMPL")
             ws_ring = ET.SubElement(item_node, "WaferSetRing")
             
-            # Ring 기본 정보
             ET.SubElement(ws_ring, "Count").text = str(ring.wafer_count)
-            ET.SubElement(ws_ring, "bSelected").text = "true"  # 기본값
+            ET.SubElement(ws_ring, "bSelected").text = "true"
             ET.SubElement(ws_ring, "WaferNumber").text = str(ring.wafer_count)
-            
-            # Enum 변환 (GUI Enum -> XML String)
-            # GUI: CW/CCW -> XML: DIR_CW/DIR_CCW
-            rot_str = "DIR_CW" if ring.rotation_dir.value == "CW" else "DIR_CCW"
-            ET.SubElement(ws_ring, "RotationDirection").text = rot_str
-            
+            ET.SubElement(ws_ring, "RotationDirection").text = "DIR_CW" if ring.rotation_dir.value == "CW" else "DIR_CCW"
             ET.SubElement(ws_ring, "RingNumberShift").text = "0"
             
-            # GUI: IN/OUT -> XML: FLAT_IN/FLAT_OUT
-            flat_str = "FLAT_IN" if ring.flat_direction.value == "IN" else "FLAT_OUT"
+            # [수정됨] 좌표 회전 보정으로 인해 Flat 방향이 반전되어야 함.
+            # 화면상 IN(중심)을 원하면 XML에는 OUT으로 저장해야 상용 툴 로직상 맞음.
+            if ring.flat_direction.value == "IN":
+                flat_str = "FLAT_OUT" # IN -> OUT으로 저장
+            else:
+                flat_str = "FLAT_IN"  # OUT -> IN으로 저장
+                
             ET.SubElement(ws_ring, "FlatDirection").text = flat_str
             
-            # Radius 변환 (Inch -> mm) 
             wafer_r_mm = (self.spec.wafer_diameter_inch / 2.0) * MM
             ring_r_mm = ring.ring_radius_inch * MM
             
             ET.SubElement(ws_ring, "WaferRadius").text = f"{wafer_r_mm:.3f}"
-            ET.SubElement(ws_ring, "InitialAngle").text = str(ring.initial_angle_deg)
-            ET.SubElement(ws_ring, "SetRadius").text = f"{ring_r_mm:.14f}" # 정밀도 유지
+            ET.SubElement(ws_ring, "InitialAngle").text = "0"
+            ET.SubElement(ws_ring, "SetRadius").text = f"{ring_r_mm:.14f}"
 
-            # 4. 개별 웨이퍼 좌표 계산 및 WaferList 생성
             wafer_list_node = ET.SubElement(ws_ring, "WaferList")
             
-            # 좌표 계산 로직 (Logic 클래스 활용 대신 여기서 mm 단위로 직접 계산)
-            import math
             cnt = max(1, ring.wafer_count)
             step = 360.0 / cnt
             
             for i in range(cnt):
-                # 각도 계산
-                k = i if ring.rotation_dir.value == "CW" else -i
-                ang_deg = (k * step) + ring.initial_angle_deg
-                ang_rad = math.radians(ang_deg)
+                # 1. Visual Angle (12시=0, CW)
+                if ring.rotation_dir.value == "CW":
+                    visual_angle = ring.initial_angle_deg + (i * step)
+                else:
+                    visual_angle = ring.initial_angle_deg - (i * step)
                 
-                # 좌표 계산 (수학적 좌표계: 0도 = 3시 방향, 반시계+, 하지만 여기선 CW가 기준일 수 있음)
-                # XML 예제 분석 결과: Initial 180도일 때 X가 음수(-173). 
-                # 즉, 일반적인 cos, sin 좌표계를 따름.
-                wx = ring_r_mm * math.cos(ang_rad)
-                wy = ring_r_mm * math.sin(ang_rad)
+                # 2. Save Angle (Visual + 180) -> C# Load (+90) -> Result (270/Top)
+                save_angle_deg = visual_angle + 180.0
+                rad = math.radians(save_angle_deg)
                 
-                # WaferDummy Item 생성 [cite: 2]
+                # 3. Coordinates
+                final_x = ring_r_mm * math.cos(rad)
+                final_y = ring_r_mm * math.sin(rad)
+
                 w_item = ET.SubElement(wafer_list_node, "Item", type="EMPL.susceptor.WaferDummy, EMPL")
                 w_dummy = ET.SubElement(w_item, "WaferDummy")
                 
-                ET.SubElement(w_dummy, "X").text = f"{wx:.14f}"
-                ET.SubElement(w_dummy, "Y").text = f"{wy:.14f}"
+                ET.SubElement(w_dummy, "X").text = f"{final_x:.14f}"
+                ET.SubElement(w_dummy, "Y").text = f"{final_y:.14f}"
                 ET.SubElement(w_dummy, "Radius").text = f"{wafer_r_mm:.3f}"
                 ET.SubElement(w_dummy, "Enable").text = "true"
                 ET.SubElement(w_dummy, "Number").text = str(global_wafer_no)
-                ET.SubElement(w_dummy, "Angle").text = "0" # 개별 회전은 보통 0
+                ET.SubElement(w_dummy, "Angle").text = "0"
                 ET.SubElement(w_dummy, "IsEmptyCell").text = "false"
                 ET.SubElement(w_dummy, "IsSeleected").text = "false"
                 
@@ -448,8 +443,7 @@ class MultiRingPanel(QWidget):
             ET.SubElement(ws_ring, "YStand").text = "0"
             ET.SubElement(ws_ring, "RingOrder").text = str(r_idx)
 
-    
-        # 5. Global Susceptor Info [cite: 26]
+        # Global Info
         wafer_r_global = (self.spec.wafer_diameter_inch / 2.0) * MM
         sus_r_global = (self.spec.susceptor_diameter_inch / 2.0) * MM
         
@@ -465,10 +459,7 @@ class MultiRingPanel(QWidget):
         ET.SubElement(root, "NeighborDistance").text = "0"
         ET.SubElement(root, "MapMode").text = "false"
 
-        # 6. Pretty Print (들여쓰기 적용) 및 저장
         xml_str = minidom.parseString(ET.tostring(root)).toprettyxml(indent="  ")
-        
-        # toprettyxml이 추가하는 상단 빈 줄 제거용 hack
         xml_str = '\n'.join([line for line in xml_str.split('\n') if line.strip()])
 
         with open(filename, "w", encoding="utf-8") as f:
@@ -480,15 +471,22 @@ class FreeViewer(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self._spec: Optional[SusceptorSpec] = None
+        self._selected_index = -1
         
         # 스타일
         self._pen_black = QPen(QColor("#111"), 1)
-        self._pen_wafer = QPen(QColor("#f39c12"), 2)
+        self._pen_wafer = QPen(QColor("black"), 1)     # 기본 웨이퍼
+        self._pen_select = QPen(QColor("#8bc4eaff"), 3)    # 선택된 웨이퍼 (파란색 강조)
+        self._pen_flat = QPen(QColor("Red"), 2)          # 플랫존 (빨간색)
         self._brush_sus = QColor("#e0e0e0")
         self._font_num = QFont("Tahoma", 10, QFont.Bold)
 
     def setSpec(self, spec: SusceptorSpec):
         self._spec = spec
+        self.update()
+
+    def setSelectedIndex(self, idx: int):
+        self._selected_index = idx
         self.update()
 
     def paintEvent(self, event):
@@ -497,26 +495,19 @@ class FreeViewer(QWidget):
         p = QPainter(self)
         p.setRenderHint(QPainter.Antialiasing)
 
-        # 1. 뷰포트 계산 (화면 중앙 정렬 및 스케일링)
+        # 1. 뷰포트 계산
         w_mm = self._spec.susceptor_width_mm
         h_mm = self._spec.susceptor_height_mm
         if w_mm <= 0 or h_mm <= 0: return
 
-        # 화면 크기 대비 여유 공간(padding)
-        margin_px = 20
+        margin_px = 30
         view_w = self.width() - 2 * margin_px
         view_h = self.height() - 2 * margin_px
 
-        # 스케일 비율 계산 (Fit to Screen)
-        scale_x = view_w / w_mm
-        scale_y = view_h / h_mm
-        scale = min(scale_x, scale_y) # 비율 유지
+        scale = min(view_w / w_mm, view_h / h_mm)
+        cx_px, cy_px = self.width() / 2, self.height() / 2
 
-        # 화면 중앙 좌표
-        cx_px = self.width() / 2
-        cy_px = self.height() / 2
-
-        # 서셉터(직사각형) 그리기 시작점 (좌상단)
+        # 서셉터 시작점
         sus_w_px = w_mm * scale
         sus_h_px = h_mm * scale
         start_x = cx_px - (sus_w_px / 2)
@@ -524,274 +515,298 @@ class FreeViewer(QWidget):
 
         # 2. 직사각형 서셉터 그리기
         sus_rect = QRectF(start_x, start_y, sus_w_px, sus_h_px)
-        p.setPen(self._pen_black)
-        p.setBrush(self._brush_sus)
+        
+        p.setPen(self._pen_black)       # 검은색 테두리
+        p.setBrush(Qt.NoBrush)          # <--- [수정됨] 내부 색상 없음 (투명)
         p.drawRect(sus_rect)
 
-        # 3. 웨이퍼 선형(Linear) 배치 그리기
-        # 규칙: 왼쪽에서 오른쪽으로 순차 배치, 수직은 중앙 정렬
+        # 3. 웨이퍼 배치 및 그리기
         wafer_d_mm = self._spec.wafer_diameter_inch * Constants.MM_PER_INCH
         wafer_r_mm = wafer_d_mm / 2.0
-        gap_mm = 5.0 # 웨이퍼 간 간격 (5mm 고정 혹은 설정 가능)
+        gap_mm = 5.0
 
-        # 배치 시작 X 좌표 (서셉터 왼쪽 끝 + 약간의 여백)
         current_x_mm = gap_mm + wafer_r_mm
         center_y_mm = h_mm / 2.0
-
-        wafer_no = 0 if self._spec.start_from_zero else 1
-
-        for ring in self._spec.rings:
-            # Free 모드에서는 Ring 1개가 웨이퍼 1개라고 가정 (혹은 count만큼 반복)
-            count = max(1, ring.wafer_count)
+        
+        for idx, ring in enumerate(self._spec.rings):
+            # 좌표 변환
+            wx_px = start_x + (current_x_mm * scale)
+            wy_px = start_y + (center_y_mm * scale)
+            wr_px = wafer_r_mm * scale
             
-            for _ in range(count):
-                # 좌표 변환 (mm -> px)
-                # 서셉터 내부 로컬 좌표 -> 화면 글로벌 좌표
-                wx_px = start_x + (current_x_mm * scale)
-                wy_px = start_y + (center_y_mm * scale)
-                wr_px = wafer_r_mm * scale
+            w_rect = QRectF(wx_px - wr_px, wy_px - wr_px, wr_px * 2, wr_px * 2)
 
-                # 웨이퍼 그리기
-                w_rect = QRectF(wx_px - wr_px, wy_px - wr_px, wr_px * 2, wr_px * 2)
-                p.setBrush(Qt.NoBrush)
-                p.setPen(self._pen_wafer)
-                p.drawEllipse(w_rect)
+            # 웨이퍼 원형
+            is_selected = (idx == self._selected_index)
+            
+            # 웨이퍼 내부도 투명하게 할지, 선택시 색상을 넣을지 결정
+            # MultiRing과 동일하게 하려면 기본은 NoBrush, 선택시에만 색상 적용
+            if is_selected:
+                # 선택된 경우 연한 파란색 등으로 채우기 (선택 식별용)
+                p.setBrush(QColor(41, 128, 185, 50)) 
+            else:
+                p.setBrush(Qt.NoBrush) # 기본 웨이퍼도 투명
 
-                # 번호 그리기
-                p.setPen(self._pen_black)
-                p.setFont(self._font_num)
-                p.drawText(w_rect, Qt.AlignCenter, str(wafer_no))
+            p.setPen(self._pen_select if is_selected else self._pen_wafer)
+            p.drawEllipse(w_rect)
 
-                # 다음 위치로 이동
-                current_x_mm += wafer_d_mm + gap_mm
-                wafer_no += 1
+            # 번호
+            p.setPen(self._pen_black)
+            p.setFont(self._font_num)
+            p.drawText(w_rect, Qt.AlignCenter, str(idx + 1))
+
+            # --- 플랫존(Red Arc) 그리기 ---
+            base_angle = 0.0
+            if ring.flat_direction.value == "IN":
+                base_angle = 90.0  # 아래쪽 (IN)
+            else:
+                base_angle = 270.0 # 위쪽 (OUT)
+            
+            final_angle = base_angle + ring.initial_angle_deg
+            
+            qt_start_angle = int(-final_angle * 16) 
+            span_angle = int(-20 * 16) 
+            qt_start_angle += int(10 * 16)
+
+            p.setPen(self._pen_flat)
+            # 플랫 그릴 때는 Brush 없어야 함 (선만 그리기)
+            p.setBrush(Qt.NoBrush) 
+            p.drawArc(w_rect, qt_start_angle, span_angle)
+
+            # 다음 위치로
+            current_x_mm += wafer_d_mm + gap_mm
 
 
 # ---------------------------------------------------------
-# 5. FreePanel (직사각형 제어 패널)
+# 5. FreePanel (리스트 & 상세 설정 추가)
 # ---------------------------------------------------------
 class FreePanel(QWidget):
     def __init__(self, viewer: FreeViewer, parent=None):
         super().__init__(parent)
         self.viewer = viewer
-        # Free 모드용 독립적인 Spec 객체를 쓸 수도 있지만, 여기선 공유한다고 가정하거나 새로 생성
         self.spec = SusceptorSpec()
-        self.spec.rings = [] # 초기엔 빈 상태
+        self.spec.rings = [] 
 
+        self._block_signals = False
         self._build_ui()
-        self._refresh()
-
+        self._refresh_all(0)
+        
+        # 뷰어 클릭 연동은 FreeViewer에 mousePress 구현이 필요하나 
+        # 일단 리스트 -> 뷰어 단방향 동기화만 구현
+        
     def _build_ui(self):
-        layout = QVBoxLayout(self)
+        root = QVBoxLayout(self)
         
-        # 1. 서셉터 크기 설정
-        g_size = QGroupBox("Rectangular Box Size (mm)")
+        # 1. 서셉터 크기
+        g_size = QGroupBox("Box Size & Global")
         f_size = QFormLayout(g_size)
-        
         self.sp_w = QDoubleSpinBox(); self.sp_w.setRange(10, 5000); self.sp_w.setValue(500.0)
         self.sp_h = QDoubleSpinBox(); self.sp_h.setRange(10, 2000); self.sp_h.setValue(100.0)
         self.sp_wd = QDoubleSpinBox(); self.sp_wd.setRange(0.1, 20.0); self.sp_wd.setValue(2.0)
-        
         f_size.addRow("Width (mm)", self.sp_w)
         f_size.addRow("Height (mm)", self.sp_h)
-        f_size.addRow("Wafer Diam (inch)", self.sp_wd)
+        f_size.addRow("Wafer Diam (in)", self.sp_wd)
+        root.addWidget(g_size)
+
+        # 2. 웨이퍼 리스트 & 추가/삭제
+        g_list = QGroupBox("Wafer List")
+        h_list = QHBoxLayout(g_list)
         
-        layout.addWidget(g_size)
-
-        # 2. 버튼
-        btn_layout = QHBoxLayout()
-        self.btn_add = QPushButton("Add Wafer")
-        self.btn_clear = QPushButton("Clear All")
+        self.list_widget = QListWidget()
+        self.list_widget.currentRowChanged.connect(self._on_list_select)
         
-        btn_layout.addWidget(self.btn_add)
-        btn_layout.addWidget(self.btn_clear)
-        layout.addLayout(btn_layout)
+        v_btns = QVBoxLayout()
+        self.btn_add = QPushButton("Add")
+        self.btn_del = QPushButton("Del")
+        self.btn_clr = QPushButton("Clear")
+        for b in (self.btn_add, self.btn_del, self.btn_clr):
+            v_btns.addWidget(b)
+        v_btns.addStretch()
+        
+        h_list.addWidget(self.list_widget, 1)
+        h_list.addLayout(v_btns)
+        root.addWidget(g_list)
 
-        layout.addStretch()
+        # 3. 개별 웨이퍼 상세 설정 (Flat Zone)
+        g_detail = QGroupBox("Selected Wafer Settings")
+        f_detail = QFormLayout(g_detail)
+        
+        self.cb_flat = QComboBox()
+        self.cb_flat.addItems([e.value for e in FlatDir]) # IN / OUT
+        
+        self.sp_angle = QDoubleSpinBox()
+        self.sp_angle.setRange(-360, 360)
+        self.sp_angle.setSingleStep(10)
+        
+        f_detail.addRow("Flat Direction", self.cb_flat)
+        f_detail.addRow("Rotation Angle", self.sp_angle)
+        root.addWidget(g_detail)
 
-        # 연결
-        self.sp_w.valueChanged.connect(self._on_spec_change)
-        self.sp_h.valueChanged.connect(self._on_spec_change)
-        self.sp_wd.valueChanged.connect(self._on_spec_change)
+        root.addStretch()
+
+        # 4. 저장 버튼
+        self.btn_save = QPushButton("Save .sus File")
+        root.addWidget(self.btn_save)
+
+        # 이벤트 연결
+        self.sp_w.valueChanged.connect(self._on_global_change)
+        self.sp_h.valueChanged.connect(self._on_global_change)
+        self.sp_wd.valueChanged.connect(self._on_global_change)
+        
         self.btn_add.clicked.connect(self._on_add)
-        self.btn_clear.clicked.connect(self._on_clear)
+        self.btn_del.clicked.connect(self._on_del)
+        self.btn_clr.clicked.connect(self._on_clear)
+        self.btn_save.clicked.connect(self._on_save)
 
-    def _on_spec_change(self):
+        self.cb_flat.currentIndexChanged.connect(self._on_detail_change)
+        self.sp_angle.valueChanged.connect(self._on_detail_change)
+
+    # --- Logic ---
+
+    def _on_global_change(self):
+        if self._block_signals: return
         self.spec.susceptor_width_mm = self.sp_w.value()
         self.spec.susceptor_height_mm = self.sp_h.value()
         self.spec.wafer_diameter_inch = self.sp_wd.value()
         self.viewer.setSpec(self.spec)
 
     def _on_add(self):
-        # Free 모드에서는 RingSpec을 하나의 웨이퍼 단위로 봅니다.
-        # (wafer_count=1)
-        self.spec.rings.append(RingSpec(wafer_count=1))
-        self._refresh()
+        # 새 웨이퍼 추가 (기본값)
+        self.spec.rings.append(RingSpec(wafer_count=1, flat_direction=FlatDir.IN, initial_angle_deg=0))
+        self._refresh_all(len(self.spec.rings)-1)
+
+    def _on_del(self):
+        idx = self.list_widget.currentRow()
+        if 0 <= idx < len(self.spec.rings):
+            self.spec.rings.pop(idx)
+            self._refresh_all(max(0, idx-1))
 
     def _on_clear(self):
         self.spec.rings = []
-        self._refresh()
+        self._refresh_all(-1)
 
-    def _refresh(self):
-        self.viewer.setSpec(self.spec)
-# ---------------------------------------------------------
-# 4. FreeViewer (직사각형 & 선형 배치 뷰어)
-# ---------------------------------------------------------
-class FreeViewer(QWidget):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self._spec: Optional[SusceptorSpec] = None
+    def _on_list_select(self, row):
+        if self._block_signals: return
         
-        # 스타일
-        self._pen_black = QPen(QColor("#111"), 1)
-        self._pen_wafer = QPen(QColor("#f39c12"), 2)
-        self._brush_sus = QColor("#e0e0e0")
-        self._font_num = QFont("Tahoma", 10, QFont.Bold)
-
-    def setSpec(self, spec: SusceptorSpec):
-        self._spec = spec
-        self.update()
-
-    def paintEvent(self, event):
-        if not self._spec: return
+        self.viewer.setSelectedIndex(row)
         
-        p = QPainter(self)
-        p.setRenderHint(QPainter.Antialiasing)
-
-        # 1. 뷰포트 계산 (화면 중앙 정렬 및 스케일링)
-        w_mm = self._spec.susceptor_width_mm
-        h_mm = self._spec.susceptor_height_mm
-        if w_mm <= 0 or h_mm <= 0: return
-
-        # 화면 크기 대비 여유 공간(padding)
-        margin_px = 20
-        view_w = self.width() - 2 * margin_px
-        view_h = self.height() - 2 * margin_px
-
-        # 스케일 비율 계산 (Fit to Screen)
-        scale_x = view_w / w_mm
-        scale_y = view_h / h_mm
-        scale = min(scale_x, scale_y) # 비율 유지
-
-        # 화면 중앙 좌표
-        cx_px = self.width() / 2
-        cy_px = self.height() / 2
-
-        # 서셉터(직사각형) 그리기 시작점 (좌상단)
-        sus_w_px = w_mm * scale
-        sus_h_px = h_mm * scale
-        start_x = cx_px - (sus_w_px / 2)
-        start_y = cy_px - (sus_h_px / 2)
-
-        # 2. 직사각형 서셉터 그리기
-        sus_rect = QRectF(start_x, start_y, sus_w_px, sus_h_px)
-        p.setPen(self._pen_black)
-        p.setBrush(self._brush_sus)
-        p.drawRect(sus_rect)
-
-        # 3. 웨이퍼 선형(Linear) 배치 그리기
-        # 규칙: 왼쪽에서 오른쪽으로 순차 배치, 수직은 중앙 정렬
-        wafer_d_mm = self._spec.wafer_diameter_inch * Constants.MM_PER_INCH
-        wafer_r_mm = wafer_d_mm / 2.0
-        gap_mm = 5.0 # 웨이퍼 간 간격 (5mm 고정 혹은 설정 가능)
-
-        # 배치 시작 X 좌표 (서셉터 왼쪽 끝 + 약간의 여백)
-        current_x_mm = gap_mm + wafer_r_mm
-        center_y_mm = h_mm / 2.0
-
-        wafer_no = 0 if self._spec.start_from_zero else 1
-
-        for ring in self._spec.rings:
-            # Free 모드에서는 Ring 1개가 웨이퍼 1개라고 가정 (혹은 count만큼 반복)
-            count = max(1, ring.wafer_count)
+        # 상세 설정 패널 업데이트
+        if 0 <= row < len(self.spec.rings):
+            ring = self.spec.rings[row]
+            self.cb_flat.setEnabled(True)
+            self.sp_angle.setEnabled(True)
             
-            for _ in range(count):
-                # 좌표 변환 (mm -> px)
-                # 서셉터 내부 로컬 좌표 -> 화면 글로벌 좌표
-                wx_px = start_x + (current_x_mm * scale)
-                wy_px = start_y + (center_y_mm * scale)
-                wr_px = wafer_r_mm * scale
+            self._block_signals = True
+            self.cb_flat.setCurrentText(ring.flat_direction.value)
+            self.sp_angle.setValue(ring.initial_angle_deg)
+            self._block_signals = False
+        else:
+            self.cb_flat.setEnabled(False)
+            self.sp_angle.setEnabled(False)
 
-                # 웨이퍼 그리기
-                w_rect = QRectF(wx_px - wr_px, wy_px - wr_px, wr_px * 2, wr_px * 2)
-                p.setBrush(Qt.NoBrush)
-                p.setPen(self._pen_wafer)
-                p.drawEllipse(w_rect)
-
-                # 번호 그리기
-                p.setPen(self._pen_black)
-                p.setFont(self._font_num)
-                p.drawText(w_rect, Qt.AlignCenter, str(wafer_no))
-
-                # 다음 위치로 이동
-                current_x_mm += wafer_d_mm + gap_mm
-                wafer_no += 1
-
-
-# ---------------------------------------------------------
-# 5. FreePanel (직사각형 제어 패널)
-# ---------------------------------------------------------
-class FreePanel(QWidget):
-    def __init__(self, viewer: FreeViewer, parent=None):
-        super().__init__(parent)
-        self.viewer = viewer
-        # Free 모드용 독립적인 Spec 객체를 쓸 수도 있지만, 여기선 공유한다고 가정하거나 새로 생성
-        self.spec = SusceptorSpec()
-        self.spec.rings = [] # 초기엔 빈 상태
-
-        self._build_ui()
-        self._refresh()
-
-    def _build_ui(self):
-        layout = QVBoxLayout(self)
+    def _on_detail_change(self):
+        if self._block_signals: return
         
-        # 1. 서셉터 크기 설정
-        g_size = QGroupBox("Rectangular Box Size (mm)")
-        f_size = QFormLayout(g_size)
-        
-        self.sp_w = QDoubleSpinBox(); self.sp_w.setRange(10, 5000); self.sp_w.setValue(500.0)
-        self.sp_h = QDoubleSpinBox(); self.sp_h.setRange(10, 2000); self.sp_h.setValue(100.0)
-        self.sp_wd = QDoubleSpinBox(); self.sp_wd.setRange(0.1, 20.0); self.sp_wd.setValue(2.0)
-        
-        f_size.addRow("Width (mm)", self.sp_w)
-        f_size.addRow("Height (mm)", self.sp_h)
-        f_size.addRow("Wafer Diam (inch)", self.sp_wd)
-        
-        layout.addWidget(g_size)
+        idx = self.list_widget.currentRow()
+        if 0 <= idx < len(self.spec.rings):
+            ring = self.spec.rings[idx]
+            ring.flat_direction = FlatDir(self.cb_flat.currentText())
+            ring.initial_angle_deg = self.sp_angle.value()
+            
+            self.viewer.setSpec(self.spec)
 
-        # 2. 버튼
-        btn_layout = QHBoxLayout()
-        self.btn_add = QPushButton("Add Wafer")
-        self.btn_clear = QPushButton("Clear All")
+    def _refresh_all(self, select_row):
+        self._block_signals = True
+        self.list_widget.clear()
+        for i in range(len(self.spec.rings)):
+            self.list_widget.addItem(f"Wafer {i+1}")
         
-        btn_layout.addWidget(self.btn_add)
-        btn_layout.addWidget(self.btn_clear)
-        layout.addLayout(btn_layout)
-
-        layout.addStretch()
-
-        # 연결
-        self.sp_w.valueChanged.connect(self._on_spec_change)
-        self.sp_h.valueChanged.connect(self._on_spec_change)
-        self.sp_wd.valueChanged.connect(self._on_spec_change)
-        self.btn_add.clicked.connect(self._on_add)
-        self.btn_clear.clicked.connect(self._on_clear)
-
-    def _on_spec_change(self):
-        self.spec.susceptor_width_mm = self.sp_w.value()
-        self.spec.susceptor_height_mm = self.sp_h.value()
-        self.spec.wafer_diameter_inch = self.sp_wd.value()
+        if 0 <= select_row < self.list_widget.count():
+            self.list_widget.setCurrentRow(select_row)
+        else:
+            self.list_widget.setCurrentRow(-1)
+            
+        self._block_signals = False
+        
+        self._on_list_select(self.list_widget.currentRow())
         self.viewer.setSpec(self.spec)
 
-    def _on_add(self):
-        # Free 모드에서는 RingSpec을 하나의 웨이퍼 단위로 봅니다.
-        # (wafer_count=1)
-        self.spec.rings.append(RingSpec(wafer_count=1))
-        self._refresh()
+    # --- Save Logic (XML) ---
+    def _on_save(self):
+        filename, _ = QFileDialog.getSaveFileName(self, "Save", "", "Susceptor (*.sus)")
+        if filename:
+            try:
+                self._save_xml(filename)
+                QMessageBox.information(self, "OK", f"Saved: {filename}")
+            except Exception as e:
+                QMessageBox.critical(self, "Error", str(e))
 
-    def _on_clear(self):
-        self.spec.rings = []
-        self._refresh()
+    def _save_xml(self, filename):
+        import xml.etree.ElementTree as ET
+        from xml.dom import minidom
+        
+        root = ET.Element("SusceptorMgr", {
+            "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+            "xmlns:xsd": "http://www.w3.org/2001/XMLSchema"
+        })
+        
+        wafer_sets = ET.SubElement(root, "WaferSets")
+        total = len(self.spec.rings)
+        
+        if total > 0:
+            item = ET.SubElement(wafer_sets, "Item", type="EMPL.susceptor.WaferSetRing, EMPL")
+            ws = ET.SubElement(item, "WaferSetRing")
+            
+            # 대표값 설정 (첫 번째 웨이퍼 기준 혹은 공통값)
+            first = self.spec.rings[0]
+            wafer_r = (self.spec.wafer_diameter_inch * Constants.MM_PER_INCH) / 2.0
+            
+            ET.SubElement(ws, "Count").text = str(total)
+            ET.SubElement(ws, "bSelected").text = "true"
+            ET.SubElement(ws, "WaferNumber").text = str(total)
+            ET.SubElement(ws, "RotationDirection").text = "DIR_CW"
+            ET.SubElement(ws, "RingNumberShift").text = "0"
+            ET.SubElement(ws, "FlatDirection").text = "FLAT_" + first.flat_direction.value
+            ET.SubElement(ws, "WaferRadius").text = f"{wafer_r:.3f}"
+            ET.SubElement(ws, "InitialAngle").text = "0"
+            ET.SubElement(ws, "SetRadius").text = "0"
+            
+            w_list = ET.SubElement(ws, "WaferList")
+            
+            # 좌표 계산
+            gap = 5.0
+            start_x = -(self.spec.susceptor_width_mm / 2.0)
+            curr_x = start_x + gap + wafer_r
+            
+            for i, r in enumerate(self.spec.rings):
+                dummy_item = ET.SubElement(w_list, "Item", type="EMPL.susceptor.WaferDummy, EMPL")
+                d = ET.SubElement(dummy_item, "WaferDummy")
+                
+                ET.SubElement(d, "X").text = f"{curr_x:.14f}"
+                ET.SubElement(d, "Y").text = "0"
+                ET.SubElement(d, "Radius").text = f"{wafer_r:.3f}"
+                ET.SubElement(d, "Enable").text = "true"
+                ET.SubElement(d, "Number").text = str(i+1)
+                
+                # 개별 Angle/Flat 저장 (XML 구조상 Angle 필드 활용)
+                # 보통 Flat IN/OUT과 Angle을 조합해서 쓰므로 여기에 저장
+                ET.SubElement(d, "Angle").text = str(r.initial_angle_deg)
+                
+                ET.SubElement(d, "IsEmptyCell").text = "false"
+                ET.SubElement(d, "IsSeleected").text = "false"
+                
+                curr_x += (wafer_r * 2 + gap)
 
-    def _refresh(self):
-        self.viewer.setSpec(self.spec)
+            ET.SubElement(ws, "NotSharingEdgePoint").text = "false"
+            ET.SubElement(ws, "XStand").text = "0"
+            ET.SubElement(ws, "YStand").text = "0"
+            ET.SubElement(ws, "RingOrder").text = "0"
+
+        # Global
+        ET.SubElement(root, "SusceptorType").text = "SUS_RECTANGULAR"
+        ET.SubElement(root, "Count").text = "1"
+        
+        xml_str = minidom.parseString(ET.tostring(root)).toprettyxml(indent="  ")
+        xml_str = '\n'.join([l for l in xml_str.split('\n') if l.strip()])
+        with open(filename, "w", encoding="utf-8") as f:
+            f.write(xml_str)

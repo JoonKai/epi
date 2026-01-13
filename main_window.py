@@ -49,6 +49,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         sub = QMdiSubWindow() 
         sub.setWidget(sub_widget) 
         sub.setAttribute(Qt.WA_DeleteOnClose, True) 
+        sub.resize(900, 600)
         self.mdiArea.addSubWindow(sub) 
         sub.show()
 
@@ -60,7 +61,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
 
 app = QApplication(sys.argv)
-with open("./styles/darkstyle.qss", "r", encoding="utf-8") as f:
+with open("./styles/susmaker_style.qss", "r", encoding="utf-8") as f:
     app.setStyleSheet(f.read())
 
 window = MainWindow()

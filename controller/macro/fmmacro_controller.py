@@ -1,7 +1,7 @@
-from PySide6.QtWidgets import QWidget, QHBoxLayout, QLabel, QToolButton
+from PySide6.QtWidgets import QWidget
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon
-from mdis.ui_mdi_fmmacro_widget import Ui_FMMacro
+from mdis.macro.ui_mdi_fmmacro_widget import Ui_FMMacro
 
 
 class FMMacroController(QWidget):

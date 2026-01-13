@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'main_windowECqBsx.ui'
+## Form generated from reading UI file 'main_windowpPzptI.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.10.1
 ##
@@ -33,8 +33,8 @@ class Ui_MainWindow(object):
         self.action.setObjectName(u"action")
         self.actionMOCVD_2 = QAction(MainWindow)
         self.actionMOCVD_2.setObjectName(u"actionMOCVD_2")
-        self.actionMariaDB = QAction(MainWindow)
-        self.actionMariaDB.setObjectName(u"actionMariaDB")
+        self.mn_mariadb = QAction(MainWindow)
+        self.mn_mariadb.setObjectName(u"mn_mariadb")
         self.action_2 = QAction(MainWindow)
         self.action_2.setObjectName(u"action_2")
         self.mn_fmmacro = QAction(MainWindow)
@@ -118,7 +118,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menu_6.menuAction())
         self.menu.addAction(self.actionOpen)
         self.menu_2.addAction(self.menuDB.menuAction())
-        self.menuDB.addAction(self.actionMariaDB)
+        self.menuDB.addAction(self.mn_mariadb)
         self.menu_3.addAction(self.menuMOCVD.menuAction())
         self.menu_3.addAction(self.menu_8.menuAction())
         self.menu_3.addAction(self.action_2)
@@ -146,7 +146,7 @@ class Ui_MainWindow(object):
         self.mn_pltrend.setText(QCoreApplication.translate("MainWindow", u"PL\ud2b8\ub80c\ub4dc", None))
         self.action.setText(QCoreApplication.translate("MainWindow", u"\uc124\ube44\uad00\ub9ac", None))
         self.actionMOCVD_2.setText(QCoreApplication.translate("MainWindow", u"MOCVD", None))
-        self.actionMariaDB.setText(QCoreApplication.translate("MainWindow", u"MariaDB", None))
+        self.mn_mariadb.setText(QCoreApplication.translate("MainWindow", u"MariaDB", None))
         self.action_2.setText(QCoreApplication.translate("MainWindow", u"\ub85c\ubd07\uc81c\uc5b4", None))
         self.mn_fmmacro.setText(QCoreApplication.translate("MainWindow", u"Factory Modeler", None))
         self.actionEES.setText(QCoreApplication.translate("MainWindow", u"EES", None))

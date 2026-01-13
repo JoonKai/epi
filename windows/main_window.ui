@@ -74,7 +74,7 @@
      <property name="title">
       <string>DB</string>
      </property>
-     <addaction name="actionMariaDB"/>
+     <addaction name="mn_mariadb"/>
     </widget>
     <addaction name="menuDB"/>
    </widget>
@@ -169,7 +169,7 @@
     <string>MOCVD</string>
    </property>
   </action>
-  <action name="actionMariaDB">
+  <action name="mn_mariadb">
    <property name="text">
     <string>MariaDB</string>
    </property>

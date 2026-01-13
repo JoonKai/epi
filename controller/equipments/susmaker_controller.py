@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QWidget, QHBoxLayout, QLabel, QToolButton
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon
-from mdis.ui_mdi_susrmaker_widget import Ui_SUSMaker
+from mdis.equipments.ui_mdi_susrmaker_widget import Ui_SUSMaker
 
 
 class SUSMakerController(QWidget):

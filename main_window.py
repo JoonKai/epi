@@ -1,7 +1,6 @@
 import sys
 from PySide6.QtWidgets import QApplication, QMainWindow, QMdiSubWindow
 from PySide6.QtCore import Qt
-# from controller.pltrend_controller import PLTrendController
 from controller.macro.fmmacro_controller import FMMacroController
 from controller.equipments.susmaker_controller import SUSMakerController
 from controller.equipments.pltrend_controller import PLTrendController

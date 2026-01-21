@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'main_windowpPzptI.ui'
+## Form generated from reading UI file 'main_windowwmzzoU.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.10.1
 ##
@@ -31,8 +31,8 @@ class Ui_MainWindow(object):
         self.mn_pltrend.setObjectName(u"mn_pltrend")
         self.action = QAction(MainWindow)
         self.action.setObjectName(u"action")
-        self.actionMOCVD_2 = QAction(MainWindow)
-        self.actionMOCVD_2.setObjectName(u"actionMOCVD_2")
+        self.mn_mocvd = QAction(MainWindow)
+        self.mn_mocvd.setObjectName(u"mn_mocvd")
         self.mn_mariadb = QAction(MainWindow)
         self.mn_mariadb.setObjectName(u"mn_mariadb")
         self.action_2 = QAction(MainWindow)
@@ -55,6 +55,12 @@ class Ui_MainWindow(object):
         self.mn_safety.setObjectName(u"mn_safety")
         self.mn_susceptormaker = QAction(MainWindow)
         self.mn_susceptormaker.setObjectName(u"mn_susceptormaker")
+        self.mn_source_manager = QAction(MainWindow)
+        self.mn_source_manager.setObjectName(u"mn_source_manager")
+        self.mn_pm_manager = QAction(MainWindow)
+        self.mn_pm_manager.setObjectName(u"mn_pm_manager")
+        self.actionSQLIte = QAction(MainWindow)
+        self.actionSQLIte.setObjectName(u"actionSQLIte")
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.gridLayout = QGridLayout(self.centralwidget)
@@ -68,8 +74,8 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.mdiArea.sizePolicy().hasHeightForWidth())
         self.mdiArea.setSizePolicy(sizePolicy)
-        brush = QBrush(QColor(0, 184, 184, 255))
-        brush.setStyle(Qt.BrushStyle.FDiagPattern)
+        brush = QBrush(QColor(80, 80, 80, 255))
+        brush.setStyle(Qt.BrushStyle.BDiagPattern)
         self.mdiArea.setBackground(brush)
 
         self.gridLayout.addWidget(self.mdiArea, 0, 0, 1, 1)
@@ -119,13 +125,16 @@ class Ui_MainWindow(object):
         self.menu.addAction(self.actionOpen)
         self.menu_2.addAction(self.menuDB.menuAction())
         self.menuDB.addAction(self.mn_mariadb)
+        self.menuDB.addAction(self.actionSQLIte)
         self.menu_3.addAction(self.menuMOCVD.menuAction())
         self.menu_3.addAction(self.menu_8.menuAction())
         self.menu_3.addAction(self.action_2)
         self.menu_8.addAction(self.mn_pltrend)
         self.menu_8.addAction(self.action)
         self.menu_8.addAction(self.mn_susceptormaker)
-        self.menuMOCVD.addAction(self.actionMOCVD_2)
+        self.menuMOCVD.addAction(self.mn_mocvd)
+        self.menuMOCVD.addAction(self.mn_source_manager)
+        self.menuMOCVD.addAction(self.mn_pm_manager)
         self.menu_7.addAction(self.mn_settings_window)
         self.menu_9.addAction(self.mn_fmmacro)
         self.menu_9.addAction(self.actionEES)
@@ -145,7 +154,7 @@ class Ui_MainWindow(object):
         self.mn_settings_window.setText(QCoreApplication.translate("MainWindow", u"\ud658\uacbd\uc124\uc815", None))
         self.mn_pltrend.setText(QCoreApplication.translate("MainWindow", u"PL\ud2b8\ub80c\ub4dc", None))
         self.action.setText(QCoreApplication.translate("MainWindow", u"\uc124\ube44\uad00\ub9ac", None))
-        self.actionMOCVD_2.setText(QCoreApplication.translate("MainWindow", u"MOCVD", None))
+        self.mn_mocvd.setText(QCoreApplication.translate("MainWindow", u"MOCVD", None))
         self.mn_mariadb.setText(QCoreApplication.translate("MainWindow", u"MariaDB", None))
         self.action_2.setText(QCoreApplication.translate("MainWindow", u"\ub85c\ubd07\uc81c\uc5b4", None))
         self.mn_fmmacro.setText(QCoreApplication.translate("MainWindow", u"Factory Modeler", None))
@@ -157,6 +166,9 @@ class Ui_MainWindow(object):
         self.actionOpen.setText(QCoreApplication.translate("MainWindow", u"Open", None))
         self.mn_safety.setText(QCoreApplication.translate("MainWindow", u"\uc548\uc804\uad50\uc721", None))
         self.mn_susceptormaker.setText(QCoreApplication.translate("MainWindow", u"Susceptor Maker", None))
+        self.mn_source_manager.setText(QCoreApplication.translate("MainWindow", u"\uc18c\uc2a4\uad00\ub9ac", None))
+        self.mn_pm_manager.setText(QCoreApplication.translate("MainWindow", u"PM \uc77c\uc815 \uad00\ub9ac", None))
+        self.actionSQLIte.setText(QCoreApplication.translate("MainWindow", u"SQLIte", None))
         self.menu.setTitle(QCoreApplication.translate("MainWindow", u"\ud30c\uc77c", None))
         self.menu_2.setTitle(QCoreApplication.translate("MainWindow", u"\ub370\uc774\ud130\ubca0\uc774\uc2a4", None))
         self.menuDB.setTitle(QCoreApplication.translate("MainWindow", u"DB", None))

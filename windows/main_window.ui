@@ -39,11 +39,11 @@
        </sizepolicy>
       </property>
       <property name="background">
-       <brush brushstyle="FDiagPattern">
+       <brush brushstyle="BDiagPattern">
         <color alpha="255">
-         <red>0</red>
-         <green>184</green>
-         <blue>184</blue>
+         <red>80</red>
+         <green>80</green>
+         <blue>80</blue>
         </color>
        </brush>
       </property>
@@ -75,6 +75,7 @@
       <string>DB</string>
      </property>
      <addaction name="mn_mariadb"/>
+     <addaction name="actionSQLIte"/>
     </widget>
     <addaction name="menuDB"/>
    </widget>
@@ -94,7 +95,9 @@
      <property name="title">
       <string>MOCVD</string>
      </property>
-     <addaction name="actionMOCVD_2"/>
+     <addaction name="mn_mocvd"/>
+     <addaction name="mn_source_manager"/>
+     <addaction name="mn_pm_manager"/>
     </widget>
     <addaction name="menuMOCVD"/>
     <addaction name="menu_8"/>
@@ -164,7 +167,7 @@
     <string>설비관리</string>
    </property>
   </action>
-  <action name="actionMOCVD_2">
+  <action name="mn_mocvd">
    <property name="text">
     <string>MOCVD</string>
    </property>
@@ -222,6 +225,21 @@
   <action name="mn_susceptormaker">
    <property name="text">
     <string>Susceptor Maker</string>
+   </property>
+  </action>
+  <action name="mn_source_manager">
+   <property name="text">
+    <string>소스관리</string>
+   </property>
+  </action>
+  <action name="mn_pm_manager">
+   <property name="text">
+    <string>PM 일정 관리</string>
+   </property>
+  </action>
+  <action name="actionSQLIte">
+   <property name="text">
+    <string>SQLIte</string>
    </property>
   </action>
  </widget>

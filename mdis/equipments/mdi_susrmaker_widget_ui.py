@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'mdi_pltrend_widgettggEpr.ui'
+## Form generated from reading UI file 'mdi_susrmaker_widget.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.10.1
 ##
@@ -25,7 +25,7 @@ class Ui_SUSMaker(object):
     def setupUi(self, SUSMaker):
         if not SUSMaker.objectName():
             SUSMaker.setObjectName(u"SUSMaker")
-        SUSMaker.resize(515, 639)
+        SUSMaker.resize(1045, 757)
         self.gridLayout_2 = QGridLayout(SUSMaker)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
         self.tabWidget = QTabWidget(SUSMaker)

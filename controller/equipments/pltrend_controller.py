@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QWidget, QHBoxLayout, QLabel, QToolButton
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon
-from mdis.equipments.ui_mdi_pltrend_widget import Ui_PLTrend
+from mdis.equipments.mdi_pltrend_widget_ui import Ui_PLTrend
 
 
 class PLTrendController(QWidget):

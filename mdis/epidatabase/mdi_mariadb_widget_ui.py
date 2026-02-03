@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'mdi_mariadb_widgetsfqPwL.ui'
+## Form generated from reading UI file 'mdi_mariadb_widget.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.10.1
 ##

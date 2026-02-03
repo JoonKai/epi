@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QWidget
-from mdis.epidatabase.ui_mdi_mariadb_widget import Ui_MariaDB
+from mdis.epidatabase.mdi_mariadb_widget_ui import Ui_MariaDB
 
 
 class MariaDBController(QWidget):

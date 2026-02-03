@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QApplication, QWidget, QPushButton, QDialog, QVBoxLayout, QLabel
-from windows.ui_settings_dialog import Ui_Settings
+from windows.settings_dialog_ui import Ui_Settings
 
 
 class SettingsDialog(QDialog):

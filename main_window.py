@@ -5,7 +5,7 @@ from controller.macro.fmmacro_controller import FMMacroController
 from controller.equipments.susmaker_controller import SUSMakerController
 from controller.equipments.pltrend_controller import PLTrendController
 from controller.epidatabase.mariadb_controller import MariaDBController
-from windows.ui_main_window import Ui_MainWindow
+from windows.main_window_ui import Ui_MainWindow
 from main_settings import SettingsDialog
 
 

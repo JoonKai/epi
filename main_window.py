@@ -2,8 +2,6 @@ import sys
 from PySide6.QtWidgets import QApplication, QMainWindow, QMdiSubWindow
 from PySide6.QtCore import Qt
 from controller.macro.fmmacro_controller import FMMacroController
-from controller.equipments.susmaker_controller import SUSMakerController
-from controller.equipments.pltrend_controller import PLTrendController
 from controller.epidatabase.mariadb_controller import MariaDBController
 from windows.main_window_ui import Ui_MainWindow
 from main_settings import SettingsDialog
